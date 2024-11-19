@@ -87,7 +87,7 @@ const HomePage = () => {
               type="text"
               placeholder="Search for movies, TV shows, documentaries..."
               value={searchQuery}
-              onChange={handleSearchChange}
+              onChange={handleSearchChange} // handle search query change
             />
             
             {/* auto complete suggestions */}
@@ -110,20 +110,20 @@ const HomePage = () => {
             <Button
               variant="outline-primary"
               className="mr-2"
-              onClick={() => setSortOption('popularity')}
+              onClick={() => setSortOption('popularity')} // handle sort by popularity
             >
               Sort by Popularity
             </Button>
             <Button
               variant="outline-primary"
               className="mr-2"
-              onClick={() => setSortOption('year')}
+              onClick={() => setSortOption('year')} // handle sort by year
             >
               Sort by Year
             </Button>
             <Button
               variant="outline-primary"
-              onClick={() => setSortOption('genre')}
+              onClick={() => setSortOption('genre')} // handle sort by genre
             >
               Sort by Genre
             </Button>
