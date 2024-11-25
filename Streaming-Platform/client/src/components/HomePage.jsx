@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-
 import { Link } from "react-router-dom";
-
 import {
   Container,
   Row,
@@ -11,6 +9,7 @@ import {
   Button,
   Form,
   ListGroup,
+  InputGroup,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -21,9 +20,11 @@ const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("popularity");
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [minRating, setMinRating] = useState(0);
 
-  // dummy content until api implementation
-  const content = [
+   // dummy content until api implementation
+   const content = [
     {
       id: 1,
       title: "The Dark Knight",
@@ -116,40 +117,45 @@ const HomePage = () => {
     },
   ];
 
+  // Extract unique genres
+  const allGenres = Array.from(
+    new Set(content.flatMap((item) => item.genre.split(", ")))
+  );
+
   useEffect(() => {
-    // show all content on initial load
     setFilteredContent(content);
     setLoading(false);
   }, []);
 
-  // handle search query change and auto complete
   const handleSearchChange = (e) => {
     const query = e.target.value;
     setSearchQuery(query);
 
-    // filter suggestions based on search query
     if (query.length > 0) {
       const suggestions = content
         .filter((item) =>
           item.title.toLowerCase().includes(query.toLowerCase())
         )
         .map((item) => item.title);
-      // show suggestions
       setFilteredSuggestions(suggestions);
     } else {
-      // hide remaining suggestions
       setFilteredSuggestions([]);
     }
   };
 
-  // filter and sort the content based on search query and selected option
+  const handleGenreChange = (genre) => {
+    setSelectedGenres((prevGenres) =>
+      prevGenres.includes(genre)
+        ? prevGenres.filter((g) => g !== genre)
+        : [...prevGenres, genre]
+    );
+  };
+
   useEffect(() => {
-    // filter content based on search query
     let updatedContent = content.filter((item) =>
       item.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // sort content based on selected toggle option
     if (sortOption === "popularity") {
       updatedContent = updatedContent.sort(
         (a, b) => b.popularity - a.popularity
@@ -162,114 +168,135 @@ const HomePage = () => {
       );
     }
 
-    // update the filtered content
-    setFilteredContent(updatedContent);
-  }, [searchQuery, sortOption]);
+    if (selectedGenres.length > 0) {
+      updatedContent = updatedContent.filter((item) =>
+        selectedGenres.some((genre) => item.genre.includes(genre))
+      );
+    }
 
-  // handle suggestion click
+    updatedContent = updatedContent.filter((item) => item.popularity >= minRating);
+
+    setFilteredContent(updatedContent);
+  }, [searchQuery, sortOption, selectedGenres, minRating]);
+
   const handleSuggestionClick = (suggestion) => {
-    // update search query
     setSearchQuery(suggestion);
-    // hide suggestions
     setFilteredSuggestions([]);
   };
 
   return (
-    <>
-      {/* content */}
-      <Container className="mt-4">
-        <Row>
-          <Col md={12} className="mb-4">
-            {/* search bar with auto complete */}
-            <Form.Control
-              type="text"
-              placeholder="Search for movies, TV shows, documentaries..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-
-            {/* auto complete suggestions */}
-            {filteredSuggestions.length > 0 && (
-              <ListGroup
-                className="mt-2"
-                style={{ maxHeight: "200px", overflowY: "auto" }}
-              >
-                {filteredSuggestions.map((suggestion, index) => (
-                  <ListGroup.Item
-                    key={index}
-                    action
-                    onClick={() => handleSuggestionClick(suggestion)}
-                  >
-                    {suggestion}
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            )}
-          </Col>
-          <Col md={12} className="mb-4">
-            {/* filter buttons */}
-            <Button
-              variant="outline-primary"
-              className="mr-2"
-              onClick={() => setSortOption("popularity")}
+    <Container className="mt-4">
+      <Row>
+        <Col md={12} className="mb-4">
+          <Form.Control
+            type="text"
+            placeholder="Search for movies, TV shows, documentaries..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          {filteredSuggestions.length > 0 && (
+            <ListGroup
+              className="mt-2"
+              style={{ maxHeight: "200px", overflowY: "auto" }}
             >
-              Sort by Popularity
-            </Button>
-            <Button
-              variant="outline-primary"
-              className="mr-2"
-              onClick={() => setSortOption("year")}
-            >
-              Sort by Year
-            </Button>
-            <Button
-              variant="outline-primary"
-              onClick={() => setSortOption("genre")}
-            >
-              Sort by Genre
-            </Button>
-          </Col>
-        </Row>
-
-        {/* displaying content */}
-        <Row>
-          {loading ? (
-            <div className="text-center">
-              <Spinner animation="border" variant="light" />
-              <p>Loading...</p>
-            </div>
-          ) : (
-            filteredContent.map((item) => (
-              <Col md={3} sm={6} xs={12} key={item.id} className="mb-4">
-                <Card className="bg-secondary text-white">
-                  <Link to="/selection">
-                    <Card.Img
-                      variant="top"
-                      src={`https://via.placeholder.com/200x300?text=${item.title}`}
-                      alt={item.title}
-                      style={{ height: "300px", objectFit: "cover" }}
-                    />
-                  </Link>
-                  <Card.Body>
-                    <Card.Title>{item.title}</Card.Title>
-                    <Card.Text>
-                      <strong>Genre:</strong> {item.genre}
-                    </Card.Text>
-                    <Card.Text>
-                      <strong>Year:</strong> {item.year}
-                    </Card.Text>
-                    <Card.Text>
-                      <strong>Rating:</strong> {item.popularity}
-                    </Card.Text>
-                    <Card.Text>{item.synopsis}</Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))
+              {filteredSuggestions.map((suggestion, index) => (
+                <ListGroup.Item
+                  key={index}
+                  action
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  {suggestion}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
           )}
-        </Row>
-      </Container>
-    </>
+        </Col>
+        <Col md={12} className="mb-4">
+          <Button
+            variant="outline-primary"
+            className="mr-2"
+            onClick={() => setSortOption("popularity")}
+          >
+            Sort by Popularity
+          </Button>
+          <Button
+            variant="outline-primary"
+            className="mr-2"
+            onClick={() => setSortOption("year")}
+          >
+            Sort by Year
+          </Button>
+          <Button
+            variant="outline-primary"
+            onClick={() => setSortOption("genre")}
+          >
+            Sort by Genre
+          </Button>
+        </Col>
+        <Col md={12} className="mb-4">
+          <h5>Filter by Genre</h5>
+          {allGenres.map((genre) => (
+            <Form.Check
+              key={genre}
+              type="checkbox"
+              label={genre}
+              onChange={() => handleGenreChange(genre)}
+              checked={selectedGenres.includes(genre)}
+            />
+          ))}
+        </Col>
+        <Col md={12} className="mb-4">
+          <h5>Filter by Rating</h5>
+          <InputGroup>
+            <Form.Control
+              type="range"
+              min="0"
+              max="10"
+              step="0.1"
+              value={minRating}
+              onChange={(e) => setMinRating(e.target.value)}
+            />
+            <InputGroup.Text>{minRating}</InputGroup.Text>
+          </InputGroup>
+        </Col>
+      </Row>
+      <Row>
+        {loading ? (
+          <div className="text-center">
+            <Spinner animation="border" variant="light" />
+            <p>Loading...</p>
+          </div>
+        ) : (
+          filteredContent.map((item) => (
+            <Col md={3} sm={6} xs={12} key={item.id} className="mb-4">
+              <Card className="bg-secondary text-white">
+                <Link to="/selection">
+                  <Card.Img
+                    variant="top"
+                    src={`https://via.placeholder.com/200x300?text=${item.title}`}
+                    alt={item.title}
+                    style={{ height: "300px", objectFit: "cover" }}
+                  />
+                </Link>
+                <Card.Body>
+                  <Card.Title>{item.title}</Card.Title>
+                  <Card.Text>
+                    <strong>Genre:</strong> {item.genre}
+                  </Card.Text>
+                  <Card.Text>
+                    <strong>Year:</strong> {item.year}
+                  </Card.Text>
+                  <Card.Text>
+                    <strong>Rating:</strong> {item.popularity}
+                  </Card.Text>
+                  <Card.Text>{item.synopsis}</Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))
+        )}
+      </Row>
+    </Container>
   );
 };
 
