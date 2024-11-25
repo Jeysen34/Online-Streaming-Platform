@@ -23,8 +23,8 @@ const HomePage = () => {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [minRating, setMinRating] = useState(0);
 
-   // dummy content until api implementation
-   const content = [
+  // dummy content until api implementation
+  const content = [
     {
       id: 1,
       title: "The Dark Knight",
@@ -122,6 +122,11 @@ const HomePage = () => {
     new Set(content.flatMap((item) => item.genre.split(", ")))
   );
 
+  const getRandomMovie = () => {
+    const randomIndex = Math.floor(Math.random() * content.length);
+    return content[randomIndex];
+  };
+
   useEffect(() => {
     setFilteredContent(content);
     setLoading(false);
@@ -183,6 +188,8 @@ const HomePage = () => {
     setSearchQuery(suggestion);
     setFilteredSuggestions([]);
   };
+
+  const randomMovie = getRandomMovie();
 
   return (
     <Container className="mt-4">
@@ -260,42 +267,61 @@ const HomePage = () => {
           </InputGroup>
         </Col>
       </Row>
-      <Row>
-        {loading ? (
-          <div className="text-center">
-            <Spinner animation="border" variant="light" />
-            <p>Loading...</p>
-          </div>
-        ) : (
-          filteredContent.map((item) => (
-            <Col md={3} sm={6} xs={12} key={item.id} className="mb-4">
-              <Card className="bg-secondary text-white">
+
+      {/* Recommended for You Section */}
+      <Row className="mb-4">
+        <Col md={12}>
+          <h3>Recommended for You!</h3>
+          <Card className="bg-secondary text-white">
+            <Link to="/selection">
+              <Card.Img
+                variant="top"
+                src={`https://via.placeholder.com/150x200?text=${randomMovie.title}`}
+                style={{
+                  objectFit: "cover",
+                  height: "300px",
+                  borderRadius: "10px",
+                }}
+              />
+              <Card.Body>
+                <Card.Title>{randomMovie.title}</Card.Title>
+                <Card.Text>{randomMovie.synopsis}</Card.Text>
+                <Button variant="primary">See More</Button>
+              </Card.Body>
+            </Link>
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Filtered Content Section */}
+      {loading ? (
+        <Row>
+          <Col className="text-center">
+            <Spinner animation="border" />
+          </Col>
+        </Row>
+      ) : (
+        <Row>
+          {filteredContent.map((item) => (
+            <Col md={4} key={item.id} className="mb-4">
+              <Card>
                 <Link to="/selection">
                   <Card.Img
                     variant="top"
-                    src={`https://via.placeholder.com/200x300?text=${item.title}`}
-                    alt={item.title}
-                    style={{ height: "300px", objectFit: "cover" }}
+                    src={`https://via.placeholder.com/150x200?text=${item.title}`}
+                    style={{ objectFit: "cover", height: "300px" }}
                   />
+                  <Card.Body>
+                    <Card.Title>{item.title}</Card.Title>
+                    <Card.Text>{item.synopsis}</Card.Text>
+                    <Button variant="primary">See More</Button>
+                  </Card.Body>
                 </Link>
-                <Card.Body>
-                  <Card.Title>{item.title}</Card.Title>
-                  <Card.Text>
-                    <strong>Genre:</strong> {item.genre}
-                  </Card.Text>
-                  <Card.Text>
-                    <strong>Year:</strong> {item.year}
-                  </Card.Text>
-                  <Card.Text>
-                    <strong>Rating:</strong> {item.popularity}
-                  </Card.Text>
-                  <Card.Text>{item.synopsis}</Card.Text>
-                </Card.Body>
               </Card>
             </Col>
-          ))
-        )}
-      </Row>
+          ))}
+        </Row>
+      )}
     </Container>
   );
 };
