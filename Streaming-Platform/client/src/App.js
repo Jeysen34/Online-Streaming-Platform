@@ -8,6 +8,7 @@ import HomePage from "./components/HomePage";
 import AboutPage from "./components/AboutPage";
 import Selection from "./components/Selection";
 import Authentication from "./components/Authentication";
+import UserProfile from "./components/UserProfile";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/auth" element={<Authentication />} />
           <Route path="/selection/:id" element={<Selection />} />
+          <Route path="/profile" element={<UserProfile />} />
         </Routes>
       </Container>
       <Footer />
