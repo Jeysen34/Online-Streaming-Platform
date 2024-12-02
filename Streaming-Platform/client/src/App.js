@@ -2,13 +2,12 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import "./App.css";
-import UserLogin from "./components/UserLogin";
-import UserRegister from "./components/UserRegister";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HomePage from "./components/HomePage";
 import AboutPage from "./components/AboutPage";
 import Selection from "./components/Selection";
+import Authentication from "./components/Authentication";
 
 function App() {
   return (
@@ -19,17 +18,9 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
-          <Route path="/selection" element={<Selection />} />
+          <Route path="/auth" element={<Authentication />} />
+          <Route path="/selection/:id" element={<Selection />} />
         </Routes>
-        <div className="App">
-          <div className="AuthenticationTitle">
-            <h1>Authentication</h1>
-          </div>
-          <div className="container">
-            <UserRegister />
-            <UserLogin />
-          </div>
-        </div>
       </Container>
       <Footer />
     </Router>

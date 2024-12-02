@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function UserRegister() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const Navigate = useNavigate();
 
   // handle form submission
   function handleForm(event) {
@@ -21,7 +23,7 @@ function UserRegister() {
         if (data.error) {
           alert(data.error);
         } else {
-          alert("Registration successful");
+          Navigate("/");
         }
       })
       .catch((error) => {
@@ -33,7 +35,9 @@ function UserRegister() {
   return (
     <div>
       <div className="signupCard">
-        <h2>Sign Up</h2>
+        <div className="signupcard-header">
+          <h2>Sign Up</h2>
+        </div>
         <form onSubmit={handleForm}>
           <div className="form-group">
             <label for="name">Name</label>

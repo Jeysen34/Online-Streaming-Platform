@@ -105,6 +105,48 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// set app.get for the review route
+app.get("/reviews", async (req, res) => {
+  // use try and catch to get reviews from the database
+  try {
+    // get all reviews from the database
+    const result = await db.query("SELECT * FROM reviews");
+    res.json(result.rows);
+    // catch any errors that happen
+  } catch (error) {
+    console.error("Failed to make request:", error.message);
+  }
+});
+
+// set app.post for the review route
+app.post("/reviews", async (req, res) => {
+  // get name, review, and rating from form
+  const name = req.body.name;
+  const review = req.body.review;
+  const date = req.body.date;
+  const rating = req.body.rating;
+
+  // validation check
+  if (!name || !review || !rating) {
+    res.json({ error: "Please fill in all fields" });
+    return;
+  }
+
+  // use try and catch to insert review into the database
+  try {
+    // insert review into the database
+    const result = await db.query(
+      "INSERT INTO reviews (name, date, review, rating) VALUES ($1, $2, $3, $4)",
+      [name, date, review, rating]
+    );
+    res.json({ message: "Review submitted successfully" });
+    // catch any errors that happen
+  } catch (error) {
+    console.error("Failed to make request:", error.message);
+  }
+});
+
+// set app.get for the home route
 app.get("/api", (req, res) => {
   res.json({ message: "Hello from server!" });
 });

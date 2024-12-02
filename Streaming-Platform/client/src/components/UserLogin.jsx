@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function UserLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const Navigate = useNavigate();
 
   // handle form submission
   function handleForm(event) {
@@ -20,7 +22,7 @@ function UserLogin() {
         if (data.error) {
           alert(data.error);
         } else {
-          alert("Login successful");
+          Navigate("/");
         }
       });
   }
@@ -28,7 +30,9 @@ function UserLogin() {
   // user authentication form (login)
   return (
     <div>
-      <h2>Login</h2>
+      <div className="logincard-header">
+        <h2>Login</h2>
+      </div>
       <form onSubmit={handleForm}>
         <div className="form-group">
           <label for="email">Email</label>

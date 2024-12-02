@@ -179,7 +179,9 @@ const HomePage = () => {
       );
     }
 
-    updatedContent = updatedContent.filter((item) => item.popularity >= minRating);
+    updatedContent = updatedContent.filter(
+      (item) => item.popularity >= minRating
+    );
 
     setFilteredContent(updatedContent);
   }, [searchQuery, sortOption, selectedGenres, minRating]);
@@ -273,7 +275,7 @@ const HomePage = () => {
         <Col md={12}>
           <h3>Recommended for You!</h3>
           <Card className="bg-secondary text-white">
-            <Link to="/selection">
+            <Link to={`/selection/${randomMovie.id}`}>
               <Card.Img
                 variant="top"
                 src={`https://via.placeholder.com/150x200?text=${randomMovie.title}`}
@@ -305,7 +307,7 @@ const HomePage = () => {
           {filteredContent.map((item) => (
             <Col md={4} key={item.id} className="mb-4">
               <Card>
-                <Link to="/selection">
+                <Link to={`/selection/${item.id}`}>
                   <Card.Img
                     variant="top"
                     src={`https://via.placeholder.com/150x200?text=${item.title}`}
