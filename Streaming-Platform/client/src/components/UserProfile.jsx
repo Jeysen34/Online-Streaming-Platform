@@ -78,12 +78,17 @@ const UserProfile = () => {
                     value={user.favoriteGenre}
                     onChange={handleFavoriteGenreChange}
                   >
-                    <option>Action</option>
-                    <option>Drama</option>
-                    <option>Comedy</option>
-                    <option>Documentary</option>
-                    <option>Romance</option>
-                    <option>Sci-Fi</option>
+                        <option>Action</option>
+                        <option>Crime</option>
+                        <option>Drama</option>
+                        <option>Romance</option>
+                        <option>Sci-Fi</option>
+                        <option>Adventure</option>
+                        <option>Documentary</option>
+                        <option>History</option>
+                        <option>Biography</option>
+                        <option>Sport</option>
+                        <option>Tech</option>
                   </Form.Select>
                 </Form.Group>
 
@@ -109,7 +114,7 @@ const UserProfile = () => {
         </Col>
       </Row>
 
-      {/* User Reviews and Ratings Section */}
+      {/* user reviews and ratings section */}
       <Row>
         <Col md={12}>
           <Card>
